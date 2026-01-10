@@ -60,7 +60,3 @@ The internal engine handles the complete rule set:
 ├── img/             # Sprite sheets for chess pieces
 └── index.html       # Main entry point
 ```
-
-## License
-
-Distributed under the GPL-3.0 License. See LICENSE for more information.
