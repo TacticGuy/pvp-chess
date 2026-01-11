@@ -57,20 +57,6 @@ function Game (savedGame) {
     return notationString
   }
 
-  function addMoveToList (move) {
-    var moveText = generateNotationString(move)
-    var moveNumber = Math.ceil(moves.length / 2)
-    var isWhiteMove = (moves.length % 2 === 1)
-    
-    if (isWhiteMove) {
-      $('<li class="move-entry"><span class="move-number">' + moveNumber + '.</span> <span class="white-move">' + moveText + '</span></li>').appendTo($('#moves'))
-    } else {
-      $('#moves > li:last').append(' <span class="black-move">' + moveText + '</span>')
-    }
-    
-    $('#moves').scrollTop($('#moves')[0].scrollHeight)
-  }
-
   function updateInfoDrawer () {
     var lastMove = moves[moves.length - 1]; var currentTurnString = ''; var lastMoveString
 
@@ -199,7 +185,6 @@ function Game (savedGame) {
       })
     }
 
-    addMoveToList(moves[moves.length - 1])
     updateInfoDrawer()
 
     if (controller.autoSave) {
@@ -691,7 +676,6 @@ function Game (savedGame) {
         if (move.capturedPieceSymbol) {
           $('<li><div class="piece ' + pieceSymbols[move.capturedPieceSymbol].color + ' ' + pieceSymbols[move.capturedPieceSymbol].kind + '">' + move.capturedPieceSymbol + '</div></li>').appendTo($('#' + pieceSymbols[move.capturedPieceSymbol].color + 'Cemetery'))
         }
-        addMoveToList(move)
       })
 
       if (moves.length && (moves[moves.length - 1].mate || moves[moves.length - 1].stalemate)) {
@@ -777,12 +761,14 @@ function Game (savedGame) {
 
       hidePromotionMenu()
 
-      $('.piece').stop(true, true).remove()
-      $('#whiteCemetery, #blackCemetery').empty()
+      $('.piece').fadeOut(300, function () {
+        $(this).parent('li').remove()
+        $(this).remove()
+      })
       $('.ui-draggable').draggable('destroy')
       $('#board td').droppable('destroy')
-      $('#board td').empty().removeClass()
-      $('#moves').empty()
+
+      $('#board td').removeClass()
 
       clearInterval(timerInterval)
       hideInfoDrawer()
@@ -1274,21 +1260,6 @@ controller = (function () {
         $('#chess').addClass('awareness')
       }
     })
-
-    $('#zenToggle').on('click', function () {
-      if ($('#moveList').hasClass('hidden')) {
-        $('#moveList').removeClass('hidden')
-        localStorage.zenMode = '0'
-      } else {
-        $('#moveList').addClass('hidden')
-        localStorage.zenMode = '1'
-      }
-    })
-
-    // Load zen mode preference
-    if (localStorage.zenMode === '1') {
-      $('#moveList').addClass('hidden')
-    }
 
     $('#toggleFaq').on('click', function () {
       $('#toggleFaq').toggleClass('active')
